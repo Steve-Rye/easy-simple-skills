@@ -26,6 +26,10 @@ easy-simple-skills/
       fixtures/
       test_check_review_brief.py
       test_skill_structure.py
+  .codex/skills/
+    clarifier/ todos/ implement/  # Codex 本地 skill 镜像
+  .claude/skills/
+    clarifier/ todos/ implement/  # Claude Code 本地 skill 镜像
   todo/
     pending/     # 待处理任务
     done/        # 已完成任务
@@ -33,9 +37,15 @@ easy-simple-skills/
     reviews/     # 非状态审查摘要，文件名与原任务一致
 ```
 
+## 本地 Skill 镜像
+
+根目录的 `clarifier/`、`todos/`、`implement/` 是公开发布的唯一源文件。`.codex/skills/` 与 `.claude/skills/` 保留同一组三个 skill 的运行时镜像，供两种宿主的项目级发现机制直接使用；其中 `implement` 只同步运行所需的校验器脚本。测试 fixture 和单元测试只保留在根目录的 `implement/tests/`。
+
+修改公开 skill 后，必须同步更新两套运行时镜像。`test_skill_structure.py` 会比较运行时文件，并验证三处的目录名、必要前置元数据和相对引用。
+
 ## 安装与调用
 
-将 `clarifier/`、`todos/`、`implement/` 三个目录保持同级复制到所用代理的 skills 根目录，然后依该代理的开放 Agent Skills 安装机制启用。各代理的具体目录和加载方式不同，应以其文档为准；缺少协作 skill 时，需要自行承担缺失的澄清、任务状态或审查摘要流程。
+对于其他支持开放 Agent Skills 格式的代理，将根目录的 `clarifier/`、`todos/`、`implement/` 三个目录保持同级复制到其 skills 根目录，再依该代理的安装机制启用。缺少协作 skill 时，需要自行承担缺失的澄清、任务状态或审查摘要流程。
 
 示例任务文件为 `todo/pending/step01.01_示例任务.md`。安装后可显式调用：
 
