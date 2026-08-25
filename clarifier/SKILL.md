@@ -1,9 +1,18 @@
 ---
 name: clarifier
-description: 将用户模糊的需求通过多轮澄清，收敛并落盘为可直接实施的项目 Markdown 代办文档；可用于新建代办文档或修改已有的代办文档。当用户消息包含“开始澄清”时必须立即加载此 skill。
+description: 将模糊需求通过多轮澄清，收敛并落盘为可直接实施的项目 Markdown 代办文档；可用于新建代办文档或修改已有的代办文档。
+license: MIT
+compatibility: 支持开放 Agent Skills 格式的代理；与同仓库的 todos 和 implement 协作时需保持三个目录同级。
+metadata:
+  triggers: 开始澄清；显式调用 clarifier
 ---
 
 # clarifier
+
+## 协作约定
+
+- 本 skill 与同级的 `todos`、`implement` 一同分发。`todos` 负责任务 Markdown 的状态目录约定；`implement` 在任务可执行后负责落地、验证与审查摘要。
+- 当用户使用“开始澄清”或显式调用本 skill 时，按以下流程处理。其他情况不自动进入完整澄清流程。
 
 ## 澄清与授权
 

@@ -1,11 +1,14 @@
 # Easy Simple Skills
 
-一组轻量、公开维护的 Codex skills。
+一组以简体中文编写、采用开放 Agent Skills 目录格式的轻量技能。它们可整体安装到支持该格式的代理中，也可单独阅读和使用；完整工作流依赖三个同级目录共同存在。
 
 ## 收录内容
 
-- `clarifier/`：通过多轮澄清，将模糊需求收敛为可实施的 Markdown 任务文档。
-- `todos/`：用纯 Markdown 文件和目录状态管理项目待办。
+- `clarifier/`：将模糊需求澄清为结构化、可落地的 Markdown 任务文档。
+- `todos/`：以纯 Markdown 文件和目录位置管理任务状态。
+- `implement/`：按照已就绪的任务文档实施、验证，并生成精简审查摘要。
+
+协作顺序通常为：`clarifier` 澄清任务 -> `todos` 管理任务文件 -> `implement` 实施和验证。`implement` 会在 `todo/reviews/` 中生成审查摘要，但不会改变任务状态；状态仍仅由 `pending/`、`done/`、`abandon/` 决定。
 
 ## 目录结构
 
@@ -15,6 +18,49 @@ easy-simple-skills/
     SKILL.md
   todos/
     SKILL.md
+  implement/
+    SKILL.md
+    scripts/
+      check_review_brief.py
+    tests/
+      fixtures/
+      test_check_review_brief.py
+      test_skill_structure.py
+  todo/
+    pending/     # 待处理任务
+    done/        # 已完成任务
+    abandon/     # 已放弃任务
+    reviews/     # 非状态审查摘要，文件名与原任务一致
 ```
 
-每个 skill 的完整规则均在其目录中的 `SKILL.md` 内。使用前请先阅读对应文件，并按自己的项目约定理解其行为。
+## 安装与调用
+
+将 `clarifier/`、`todos/`、`implement/` 三个目录保持同级复制到所用代理的 skills 根目录，然后依该代理的开放 Agent Skills 安装机制启用。各代理的具体目录和加载方式不同，应以其文档为准；缺少协作 skill 时，需要自行承担缺失的澄清、任务状态或审查摘要流程。
+
+示例任务文件为 `todo/pending/step01.01_示例任务.md`。安装后可显式调用：
+
+```text
+# Codex
+$implement 使用 todo/pending/step01.01_示例任务.md 开始实施
+
+# Claude Code
+/implement 使用 todo/pending/step01.01_示例任务.md 开始实施
+```
+
+自然语言触发的支持程度因代理而异。需要确定行为时，请使用显式调用。
+
+## 前置条件与本地验证
+
+本仓库的校验器和测试只需要 Python 3 标准库，无网络、密钥或模型服务依赖。请在仓库根目录运行：
+
+```sh
+python3 -m unittest discover -s implement/tests -p 'test_*.py'
+python3 implement/scripts/check_review_brief.py implement/tests/fixtures/valid_review.md
+python3 implement/scripts/check_review_brief.py implement/tests/fixtures/invalid_section_order.md; test $? -ne 0
+```
+
+最后一条命令预期校验器以非零状态退出，用于确认不合规摘要会被拒绝。`test_skill_structure.py` 是无外部格式校验工具时的本地回退检查：验证三个目录名、必要前置元数据与 Markdown 相对引用。
+
+## 许可证
+
+本项目采用 [MIT License](LICENSE)。

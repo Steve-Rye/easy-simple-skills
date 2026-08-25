@@ -1,11 +1,17 @@
 ---
 name: todos
 description: 用纯 Markdown 管理项目待办的创建、拆分、更新、完成和放弃。
+license: MIT
+compatibility: 支持开放 Agent Skills 格式的代理；与同仓库的 clarifier 和 implement 协作时需保持三个目录同级。
+metadata:
+  triggers: 显式调用 todos；任务进度更新；更新任务
 ---
 
 # todos
 
 直接通过文件系统操作项目 `todo/` 下的 Markdown 任务文件；文件位置决定状态，文件名决定父子关系。
+
+本 skill 与同级的 `clarifier`、`implement` 一同分发。`clarifier` 创建或更新可执行任务，`implement` 可为任务生成审查摘要；三者不要求任何特定宿主平台字段。
 
 ## 基本规则
 
@@ -21,10 +27,13 @@ todo/
   pending/
   done/
   abandon/
+  reviews/
 ```
 
 - 新建任务放入 `pending/`；完成、放弃时分别移入 `done/`、`abandon/`。
 - 任务状态只由 `pending/`、`done/`、`abandon/` 中的位置决定。
+- `reviews/` 是非任务状态目录，由 `implement` 写入审查摘要。其文件名必须与同一 `todo/` 根目录中原任务文件的文件名一致，但不得据此推断任务状态。
+- `implement` 在生成审查摘要时，会从同一 `todo/` 根目录的 `pending/`、`done/`、`abandon/` 中按同名定位原任务，再写入 `reviews/`；不会因此移动任务。
 - 状态变更在同一 `todo/` 根目录内完成，除非用户明确要求迁移。外部计划或设计文档不自动等同于 todo 任务。
 
 ## 文档命名示例
