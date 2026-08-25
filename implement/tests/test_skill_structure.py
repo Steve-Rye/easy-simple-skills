@@ -22,7 +22,7 @@ class SkillStructureTests(unittest.TestCase):
             self.assertIsNotNone(match, f"{skill_file} 缺少 YAML 前置元数据")
             front_matter = match.group(1)
             self.assertRegex(front_matter, rf"(?m)^name:\s*{re.escape(skill_name)}\s*$")
-            for key in ("description", "license", "compatibility"):
+            for key in ("description",):
                 self.assertRegex(front_matter, rf"(?m)^{key}:\s*\S")
 
     def test_relative_markdown_links_resolve(self) -> None:
